@@ -23,7 +23,7 @@ from nltk.corpus import words
 
 from typing import List, Tuple, Dict
 
-
+# create a set of English words using a corpus
 stop_words = stopwords.words("english")
 vocab = set(words.words())
 vocab = vocab - set(stop_words)
@@ -32,7 +32,12 @@ words_set = {lemmatizer.lemmatize(word) for word in vocab}
 
 
 def load_data(database_filepath: str) -> Tuple[np.ndarray, np.ndarray, List]:
-    """To do"""
+    """
+    Load data from database
+
+    :param database_filepath: path to sqlite database file
+    :return: tuple of feature matrix, target matrix and list of category names
+    """
     repo = Path.cwd()
     path = repo / database_filepath
 
@@ -47,7 +52,12 @@ def load_data(database_filepath: str) -> Tuple[np.ndarray, np.ndarray, List]:
 
 
 def tokenize(text: str) -> List:
-    """TO DO"""
+    """
+    Tokenize and lemmatize text
+
+    :param text: Text to be tokenized
+    :return: List of lemmatized word tokens
+    """
 
     text = re.sub(r"[^a-zA-Z]", " ", text.lower())
     tokens = word_tokenize(text)
@@ -60,8 +70,12 @@ def tokenize(text: str) -> List:
     return clean_tokens
 
 
-def build_model() -> Pipeline:
-    """TO DO"""
+def build_model() -> _search.GridSearchCV:
+    """
+    Build pipeline and run grid search with cross-validation
+
+    :return: Model object returned by GridSearchCV
+    """
 
     pipeline = Pipeline(
         [
@@ -88,13 +102,26 @@ def build_model() -> Pipeline:
 
 
 def get_metrics(y_test: np.ndarray, y_preds: np.ndarray) -> Dict:
-    """TO DO"""
+    """
+    Generate classification metrics for a single category
+
+    :param y_test: Vector of target values
+    :param y_preds: Vector of predictions from classifier
+    :return: Dictionary with classification metrics
+    """
     cr = classification_report(y_test, y_preds, zero_division=0, output_dict=True)
     return cr
 
 
 def generate_report(Y_test: np.ndarray, Y_preds: np.ndarray, category_names) -> Dict:
-    """TO DO"""
+    """
+    Generate classification metrics for all categories
+
+    :param Y_test: Matrix of target values
+    :param Y_preds: Matrix of predictions
+    :param category_names: Names of categories
+    :return: Dictionary with classification metrics for all categories
+    """
     report_dict = {}
     for idx, output in enumerate(category_names):
         metrics_dict = get_metrics(Y_test[:, idx], Y_preds[:, idx])
@@ -110,7 +137,17 @@ def evaluate_model(
     category_names: List,
     report: bool = False,
 ) -> None:
-    """TO DO"""
+    """
+    Evaluate model returned by GridSearchCV. Generate classification metrics.
+    Save metrics to file and print them if requested
+
+    :param model: Model returned by GridSearchCV
+    :param X_test: Feature matrix
+    :param Y_test: Target matrix
+    :param category_names: Names of categories
+    :param report: Enable printing of classification metrics
+    :return: None
+    """
     Y_preds = model.predict(X_test)
     report_dict = generate_report(Y_test, Y_preds, category_names)
 
@@ -125,6 +162,13 @@ def evaluate_model(
 
 
 def save_model(model, model_filepath: str) -> None:
+    """
+    Save model returned by GridSearchCV
+
+    :param model: Model returned by GridSearchCV
+    :param model_filepath: Path of pickle file
+    :return: None
+    """
     pickle.dump(model, open(model_filepath, "wb"))
 
 

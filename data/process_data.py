@@ -6,7 +6,13 @@ from sqlalchemy import create_engine
 
 
 def load_data(messages_filepath: str, categories_filepath: str) -> pd.DataFrame:
-    """To do"""
+    """
+    Load data sets for messages and categories; and merge them
+
+    :param messages_filepath: path to messages data file
+    :param categories_filepath: path to categories data file
+    :return: dataframe containing categories and messages
+    """
     repo = Path.cwd()
 
     path = repo / messages_filepath
@@ -26,7 +32,12 @@ def load_data(messages_filepath: str, categories_filepath: str) -> pd.DataFrame:
 
 
 def clean_data(df: pd.DataFrame) -> pd.DataFrame:
-    """To do"""
+    """
+    Clean data
+
+    :param df: dataframe with categories and messages
+    :return: cleaned data frame
+    """
     categories = df.categories.str.split(pat=";", expand=True)
     category_colnames = list(map(lambda x: x.split("-")[0], categories.iloc[0, :]))
     categories.columns = category_colnames
@@ -42,7 +53,13 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def save_data(df: pd.DataFrame, database_filename: str) -> None:
-    """To do"""
+    """
+    Save dataframe to sqlite database
+
+    :param df: dataframe to be saved to database
+    :param database_filename: filename of sqlite database
+    :return: None
+    """
     engine = create_engine(f"sqlite:///{database_filename}")
     df.to_sql("Message", engine, if_exists="replace", index=False)
 
