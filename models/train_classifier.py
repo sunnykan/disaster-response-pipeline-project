@@ -70,7 +70,7 @@ def tokenize(text: str) -> List:
     return clean_tokens
 
 
-def build_model() -> _search.GridSearchCV:
+def build_model() -> GridSearchCV:
     """
     Build pipeline and run grid search with cross-validation
 
