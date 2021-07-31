@@ -1,43 +1,63 @@
-import sys
+import argparse
+import pandas as pd
+
+from pathlib import Path
+from sqlalchemy import create_engine
 
 
-def load_data(messages_filepath, categories_filepath):
-    pass
+def load_data(messages_filepath: str, categories_filepath: str) -> pd.DataFrame:
+    """To do"""
+    repo = Path.cwd()
+
+    path = repo / messages_filepath
+    messages = pd.read_csv(path, sep=",")
+
+    path = repo / categories_filepath
+    categories = pd.read_csv(path, sep=",")
+
+    messages.drop_duplicates(subset="id", inplace=True)
+    categories.drop_duplicates(subset="id", inplace=True)
+
+    messages.set_index(keys="id", inplace=True)
+    categories.set_index(keys="id", inplace=True)
+
+    df = pd.merge(categories, messages, left_index=True, right_index=True)
+    return df
 
 
-def clean_data(df):
-    pass
+def clean_data(df: pd.DataFrame) -> pd.DataFrame:
+    """To do"""
+    categories = df.categories.str.split(pat=";", expand=True)
+    category_colnames = list(map(lambda x: x.split("-")[0], categories.iloc[0, :]))
+    categories.columns = category_colnames
+    categories = categories.applymap(lambda x: int(x[-1]))
+    categories.drop(columns="child_alone", inplace=True)
+
+    df.drop(columns="categories", inplace=True)
+    df = pd.concat([categories, df], join="inner", axis=1)
+    df.drop_duplicates(inplace=True)
+    df = df[df.related != 2]
+
+    return df
 
 
-def save_data(df, database_filename):
-    pass  
+def save_data(df: pd.DataFrame, database_filename: str) -> None:
+    """To do"""
+    engine = create_engine(f"sqlite:///{database_filename}")
+    df.to_sql("Message", engine, if_exists="replace", index=False)
 
 
 def main():
-    if len(sys.argv) == 4:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("Messages", help="filepath: messages data")
+    parser.add_argument("Categories", help="filepath: categories data")
+    parser.add_argument("Database", help="filepath: Database")
+    args = parser.parse_args()
 
-        messages_filepath, categories_filepath, database_filepath = sys.argv[1:]
-
-        print('Loading data...\n    MESSAGES: {}\n    CATEGORIES: {}'
-              .format(messages_filepath, categories_filepath))
-        df = load_data(messages_filepath, categories_filepath)
-
-        print('Cleaning data...')
-        df = clean_data(df)
-        
-        print('Saving data...\n    DATABASE: {}'.format(database_filepath))
-        save_data(df, database_filepath)
-        
-        print('Cleaned data saved to database!')
-    
-    else:
-        print('Please provide the filepaths of the messages and categories '\
-              'datasets as the first and second argument respectively, as '\
-              'well as the filepath of the database to save the cleaned data '\
-              'to as the third argument. \n\nExample: python process_data.py '\
-              'disaster_messages.csv disaster_categories.csv '\
-              'DisasterResponse.db')
+    merged_df = load_data(args.Messages, args.Categories)
+    cleaned_df = clean_data(merged_df)
+    save_data(cleaned_df, args.Database)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
