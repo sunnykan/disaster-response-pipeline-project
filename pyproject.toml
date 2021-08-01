@@ -15,6 +15,9 @@ black = "^21.7b0"
 mypy = "^0.910"
 dvc = "^2.5.4"
 jupyterlab = "^3.1.0"
+plotly = "^5.1.0"
+Flask = "^2.0.1"
+joblib = "^1.0.1"
 
 [tool.poetry.dev-dependencies]
 

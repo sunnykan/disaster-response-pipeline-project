@@ -14,7 +14,7 @@ from nltk.corpus import words
 
 from flask import Flask
 from flask import render_template, request, jsonify
-from plotly.graph_objs import Bar
+import plotly.graph_objects as gro
 from sqlalchemy import create_engine
 from typing import List
 
@@ -61,27 +61,53 @@ model = joblib.load("../models/model_rfc_gridsearchcv.pkl")
 @app.route("/index")
 def index():
 
-    # extract data needed for visuals
-    # TODO: Below is an example - modify to extract data for your own visuals
+    figures = []
+
+    # FIGURE 1 ------------------------------
+    prop_messages = (df.iloc[:, :-3].mean().sort_values(ascending=False) * 100)[:10]
+
+    figure = gro.Figure(
+        [gro.Bar(name="Categories", x=prop_messages.index, y=prop_messages.values)]
+    )
+
+    figure.update_layout(
+        title="Distribution of Message Categories (Top 10)",
+        yaxis_title="Proportion of Messages",
+    )
+    figures.append(figure)
+
+    # FIGURE 2 ------------------------------
     genre_counts = df.groupby("genre").count()["message"]
     genre_names = list(genre_counts.index)
 
-    # create visuals
-    # TODO: Below is an example - modify to create your own visuals
-    graphs = [
-        {
-            "data": [Bar(x=genre_names, y=genre_counts)],
-            "layout": {
-                "title": "Distribution of Message Genres",
-                "yaxis": {"title": "Count"},
-                "xaxis": {"title": "Genre"},
-            },
-        }
-    ]
+    figure = gro.Figure([gro.Bar(name="Genres", x=genre_names, y=genre_counts)])
+
+    figure.update_layout(
+        title="Distribution of Message Genres",
+        yaxis_title="Number of Messages",
+    )
+    figures.append(figure)
+
+    # FIGURE 3 ------------------------------
+    aid_genre = df.groupby(["genre"])["aid_related"].sum()
+    weather_genre = df.groupby(["genre"])["weather_related"].sum()
+
+    figure = gro.Figure(
+        [
+            gro.Bar(name="Aid", x=genre_names, y=aid_genre),
+            gro.Bar(name="Weather", x=genre_names, y=weather_genre),
+        ]
+    )
+    figure.update_layout(
+        barmode="group",
+        title="Aid and Weather related Messages by Genre",
+        yaxis_title="Number of Messages",
+    )
+    figures.append(figure)
 
     # encode plotly graphs in JSON
-    ids = ["graph-{}".format(i) for i, _ in enumerate(graphs)]
-    graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
+    ids = ["graph-{}".format(i) for i, _ in enumerate(figures)]
+    graphJSON = json.dumps(figures, cls=plotly.utils.PlotlyJSONEncoder)
 
     # render web page with plotly graphs
     return render_template("master.html", ids=ids, graphJSON=graphJSON)
