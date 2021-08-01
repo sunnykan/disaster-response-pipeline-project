@@ -21,14 +21,13 @@ from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.corpus import words
 
-from typing import List, Tuple, Dict
+from typing import List, Tuple, Dict, Set
 
 # create a set of English words using a corpus
-stop_words = stopwords.words("english")
-vocab = set(words.words())
-vocab = vocab - set(stop_words)
+stop_words: List = stopwords.words("english")
+vocab: Set = set(words.words()) - set(stop_words)
 lemmatizer = WordNetLemmatizer()
-words_set = {lemmatizer.lemmatize(word) for word in vocab}
+words_set: set = {lemmatizer.lemmatize(word) for word in vocab}
 
 
 def load_data(database_filepath: str) -> Tuple[np.ndarray, np.ndarray, List]:
