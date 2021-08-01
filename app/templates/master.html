@@ -69,9 +69,8 @@
             <h1 class="text-center">Overview of Training Dataset</h1>
         </div>
 
-        {% endblock %}
 
-        <!--bottom chart-->
+        <!--top chart-->
         <div class=" row mb-12">
             <div class="col-12">
                 <div id="chart3">
@@ -80,7 +79,7 @@
             </div>
         </div>
 
-        <!--top two charts-->
+        <!--bottom two charts-->
         <div class="row">
             <div class="col-6">
                 <div id="{{ids[1]}}"></div>
@@ -90,10 +89,11 @@
             </div>
         </div>
 
+        {% endblock %}
 
-        <!-- {% for id in ids %}
-        <div id="{{id}}"></div>
-        {% endfor %} -->
+        <!-- {% for id in ids %} -->
+        <!-- <div id="{{id}}"></div> -->
+        <!-- {% endfor %} -->
     </div>
 </body>
 
