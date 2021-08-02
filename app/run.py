@@ -72,7 +72,7 @@ def index():
 
     figure.update_layout(
         title="Distribution of Message Categories (Top 10)",
-        yaxis_title="Proportion of Messages",
+        yaxis_title="Proportion of Messages by Category",
     )
     figures.append(figure)
 
@@ -83,8 +83,7 @@ def index():
     figure = gro.Figure([gro.Bar(name="Genres", x=genre_names, y=genre_counts)])
 
     figure.update_layout(
-        title="Distribution of Message Genres",
-        yaxis_title="Number of Messages",
+        title="Distribution of Message Genres", yaxis_title="Number of Messages",
     )
     figures.append(figure)
 
