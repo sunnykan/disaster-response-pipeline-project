@@ -23,7 +23,7 @@ A list of dependencies may be found in the [pyproject.toml](https://github.com/s
 
 ## Screenshots
 * Main page with some graphs of summary statistics of the training data. 
-![Graphs of summary statistics of training data](#)
+![Graphs of summary statistics of training data](https://github.com/sunnykan/disaster_response_pipeline_project/blob/main/images/index-page-graph1.png?raw=true)
 
 * Sample results from classifying a message.
 ![Results from classification of sample text](https://github.com/sunnykan/disaster_response_pipeline_project/blob/main/images/classification-page.png?raw=true)
