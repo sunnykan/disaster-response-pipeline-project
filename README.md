@@ -16,6 +16,7 @@ A list of dependencies may be found in the [pyproject.toml](https://github.com/s
 ## Usage
 * ETL: [process_data.py](https://github.com/sunnykan/disaster_response_pipeline_project/blob/main/data/process_data.py?raw=True) reads and cleans the data which is then inserted into a sqlite database. Run ```python data/process_data.py -h``` for instructions.
 * Classification: The classifier [train_classifier.py](https://github.com/sunnykan/disaster_response_pipeline_project/blob/main/models/train_classifier.py?raw=True) pulls the data from the database and feeds it through a pipeline the processes the messages into tokens and classifies them. Different classifiers may used in the pipeline. Run ```python models/train_classifier.py -h``` for instructions.
+* Flask application: To run the flask app locally, clone the repository, open the ```app``` folder and type ```python run.py```. 
 
 ## Data Issues
 * Imbalance: Most of the categories in the target are severely imbalanced. To address the issues, all classifiers were run with the parameter  ```class_weight``` set to ```'balanced'```. Counts of the target variable are used to automatically adjust weights inversely proportional to class frequencies in the categories. For more information, see the relevant documentation for classifiers in the scikit-learn package.
